@@ -1,19 +1,12 @@
 spring:
   application:
-    name: microservices-template
-  profiles:
-    active: redis
-  session:
-    store-type: none
-#  output:
-#    ansi:
-#      enabled: ALWAYS
+    name: sis-redirect
   security:
     oauth2:
       resourceserver:
         jwt:
           jwk-set-uri: ${oauth.tokenprovider.url}/.well-known/jwks.json
-microservices-template:
+sis-redirect:
   version: @app.version@
   env: ${app.env}
 
@@ -24,11 +17,3 @@ server:
   servlet:
     session:
       timeout: 30m
-
----
-
-spring:
-  profiles: redis
-  session:
-    store-type: redis
-    redis.namespace: microservices-template-${app.version}:session
