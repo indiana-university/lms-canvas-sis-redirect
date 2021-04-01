@@ -18,7 +18,7 @@
         <docker_repository_name>sis-redirect</docker_repository_name>
         <docker_tag>stable</docker_tag>
         <helm_service_name>sis-redirect</helm_service_name>
-        <lms-bom.version>4.0.7-SNAPSHOT</lms-bom.version>
+        <lms-bom.version>4.0.7</lms-bom.version>
     </properties>
 
     <dependencyManagement>
