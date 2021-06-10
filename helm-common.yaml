@@ -1,9 +1,9 @@
-nameOverride: microservices-template
+nameOverride: sis-redirect
 
 namespace: ua-vpit--enterprise-systems--lms
 
 image:
-  repository: registry.docker.iu.edu/lms/microservices-template
+  repository: registry.docker.iu.edu/lms/sis-redirect
   tag: unstable
   pullPolicy: Always
 
@@ -23,7 +23,9 @@ env:
 imagePullSecrets:
   - name: registry-prod
 
-activeProfiles: "redis"
+javaOpts: "-XX:MaxRAMPercentage=90 -XshowSettings:vm"
+
+activeProfiles: "none"
 
 service:
   type: ClusterIP
