@@ -1,13 +1,12 @@
 # lms-canvas-sisredirect
-LTI tool which allows for a redirection to an external URL
+LTI tool which allows for a redirection to an external URL.  Additionally, if the course has more than one section, it'll instead go to an alternate url.
 
 ## Building with custom variable replacement service
 The default implementation does basic variable replacements with information gathered from LTI launch details. 
-Anything beyond that be done with a custom implementation.  
+Anything beyond that needs to be done with a custom implementation.  
+Build the tool, while enabling a custom variable replacement service:
 ```
-mvn clean install -P var-repl-ser -Dvariable-replacement-service.groupId=edu.iu.uits.lms -Dvariable-replacement-service.artifactId=lms-iu-variable-replacement-service -Dvariable-replacement-service.version=5.0.1
-mvn clean install -P var-repl-ser -Dvariable-replacement-service.groupId=edu.iu.uits.lms -Dvariable-replacement-service.artifactId=lms-iu-variable-replacement-service -Dvariable-replacement-service.version=5.0.2-SNAPSHOT \
-    spring-boot:run -Dspring-boot.run.jvmArguments="-Dapp.fullFilePath=file:/opt/j2ee/security/lms_poc/base -Dspring.profiles.active=dev,vault -Dlogging.level.edu.iu.uits.lms=DEBUG -Dapp.customServicePackage=edu.iu.uits.lms.variablereplacement -Dlti.clientregistration.defaultClient=saltire"
+mvn clean install -P var-repl-ser -Dvariable-replacement-service.groupId=edu.iu.uits.lms -Dvariable-replacement-service.artifactId=lms-iu-variable-replacement-service -Dvariable-replacement-service.version=5.0.2
 ```
 
 ## Running standalone
@@ -42,6 +41,8 @@ In the `Message` section, set the following:
 canvas_course_id=123456
 canvas_user_login_id=johnsmith
 instructure_membership_roles=http://purl.imsglobal.org/vocab/lis/v2/membership#Instructor
+redirect_url=http://google.com/search?q=${CANVAS_COURSE_ID}
+redirect_url_alt=http://google.com/search?q=alt_foobar
 ```
 
 </td></tr>

@@ -45,17 +45,14 @@ public class SisRedirectController extends RedirectableLtiController {
       //check if the course has crosslisted sections
       List<Section> sections = courseService.getCourseSections(canvasCourseId);
 
-      int countSisSections = 0;
-      for (Section section : sections) {
-         if (section.getSis_section_id() != null)
-            countSisSections++;
-      }
+      long countSisSections = sections.stream()
+            .filter(s -> s.getSis_section_id() != null)
+            .count();
 
-      if (countSisSections > 1) {
+      if (countSisSections > 1L) {
          log.debug("This course has multiple crosslisted sections.  Redirecting to alternate url.");
          return altUrl;
-      }
-      else {
+      } else {
          return super.performMacroVariableReplacement(inputUrl);
       }
    }
