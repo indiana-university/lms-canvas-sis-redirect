@@ -23,7 +23,7 @@ Add env vars or system properties as desired.
 
 ## Setup Database
 After compiling, see `target/generated-resources/sql/ddl/auto/postgresql9.sql` for appropriate ddl.
-Insert a record into the `LTI_13_AUTHZ` table with your tool's registration_id (`lms_redirect_sis`), along with the client_id
+Insert a record into the `LTI_13_AUTHZ` table with your tool's registration_id (`lms_redirect_sis_XXX`, where `XXX` distinguishes it from other redirect tools), along with the client_id
 and secret from Canvas's Developer Key.  An `env` designator is also required here, and allows a database to support
 multiple environments simultaneously (dev and reg, for example).
 
@@ -56,7 +56,7 @@ From the `Security Model` section, set the following:
 <tr><td>LTI version</td><td>1.3.0</td></tr>
 <tr><td>Message URL</td><td>http://localhost:8080/app/launch</td></tr>
 <tr><td>Client ID</td><td>dev (or whatever is appropriate based on the record inserted in the database table from above)</td></tr>
-<tr><td>Initiate login URL</td><td>http://localhost:8080/lti/login_initiation/lms_redirect_sis</td></tr>
+<tr><td>Initiate login URL</td><td>http://localhost:8080/lti/login_initiation/lms_redirect_sis_XXX (where `XXX` distinguishes it from other redirect tools)</td></tr>
 <tr><td>Redirection URI(s)</td><td>http://localhost:8080/lti/login</td></tr>
 </table>
 
@@ -134,3 +134,19 @@ that need to be accounted for while using this setup.
 
 This is marked as experimental due to the fact that we aren't running with this option at IU.  We are running into CORS
 issues when trying to talk to our OAuth2 service via swagger, so we can't verify if it really works or not!
+
+## Using variables in the URL
+Variables can be used in the `redirect_url` which the system will replace with appropriate values.  
+Supported variables in the default implementation:
+- ${USER_ID}
+- ${USER_EID}
+- ${USER_FIRST_NAME}
+- ${USER_LAST_NAME}
+- ${USER_ROLE}
+- ${CANVAS_COURSE_ID}
+
+Variables requiring a custom implementation:
+- ${SIS_COURSE_ID}
+- ${CLASS_NBR}
+- ${SIS_TERM_ID}
+- ${SIS_CAMPUS}
