@@ -42,12 +42,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.view.RedirectView;
 import uk.ac.ox.ctl.lti13.security.oauth2.client.lti.authentication.OidcAuthenticationToken;
 
 import java.util.List;
 
 @Controller
-@RequestMapping("/redirect")
+@RequestMapping("/app/redirect")
 @Slf4j
 public class SisRedirectController extends RedirectableLtiController {
 
@@ -65,13 +66,17 @@ public class SisRedirectController extends RedirectableLtiController {
    }
 
    @RequestMapping
-   public String redirect() {
+   public RedirectView redirect() throws Exception {
       OidcAuthenticationToken token = getTokenWithoutContext();
       OidcTokenUtils oidcTokenUtils = new OidcTokenUtils(token);
       String redirectUrl = oidcTokenUtils.getCustomValue(CUSTOM_REDIRECT_URL_PROP);
       String courseId = oidcTokenUtils.getCourseId();
       String altUrl = oidcTokenUtils.getCustomValue(CUSTOM_REDIRECT_URL_ALT_PROP);
-      return "redirect:" + determineRedirectUrl(redirectUrl, courseId, altUrl);
+
+      RedirectView rv =  new RedirectView(determineRedirectUrl(redirectUrl, courseId, altUrl));
+      //Spring has its own mechanism for variables in redirect urls.  Let's turn it off!
+      rv.setExpandUriTemplateVariables(false);
+      return rv;
    }
 
    private String determineRedirectUrl(String inputUrl, String canvasCourseId, String altUrl) {
