@@ -66,7 +66,7 @@ public class SisRedirectController extends RedirectableLtiController {
    }
 
    @RequestMapping
-   public RedirectView redirect() throws Exception {
+   public RedirectView redirect() {
       OidcAuthenticationToken token = getTokenWithoutContext();
       OidcTokenUtils oidcTokenUtils = new OidcTokenUtils(token);
       String redirectUrl = oidcTokenUtils.getCustomValue(CUSTOM_REDIRECT_URL_PROP);
