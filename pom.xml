@@ -77,6 +77,7 @@
         <lms-canvas-services.version>5.0.12</lms-canvas-services.version>
         <lms-canvas-common-configuration.version>5.0.11</lms-canvas-common-configuration.version>
         <lms-canvas-lti-framework.version>5.1.22</lms-canvas-lti-framework.version>
+        <lms-canvas-redis-config.version>5.0.9</lms-canvas-redis-config.version>
         <nimbus-jose-jwt.version>9.10.1</nimbus-jose-jwt.version>
         <spring-cloud-starter-vault-config.version>3.0.5</spring-cloud-starter-vault-config.version>
         <spring-security-bom.version>5.5.2</spring-security-bom.version>
@@ -141,6 +142,11 @@
             <version>${lms-canvas-services.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>edu.iu.uits.lms</groupId>
+            <artifactId>lms-canvas-redis-config</artifactId>
+            <version>${lms-canvas-redis-config.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

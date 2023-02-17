@@ -41,6 +41,7 @@ import edu.iu.uits.lms.common.server.ServerUtils;
 import edu.iu.uits.lms.common.variablereplacement.EnableVariableReplacementService;
 import edu.iu.uits.lms.lti.config.EnableGlobalErrorHandler;
 import edu.iu.uits.lms.lti.config.EnableLtiClient;
+import edu.iu.uits.lms.redis.config.EnableRedisConfiguration;
 import edu.iu.uits.lms.sisredirect.config.ToolConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,7 @@ import java.util.Date;
 @EnableCookieFilter
 @EnableConfigurationProperties(GitRepositoryState.class)
 @EnableVariableReplacementService
+@EnableRedisConfiguration
 public class WebApplication {
 
     @Autowired
