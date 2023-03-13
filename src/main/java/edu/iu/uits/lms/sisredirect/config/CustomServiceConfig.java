@@ -34,27 +34,24 @@ package edu.iu.uits.lms.sisredirect.config;
  */
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.context.support.GenericWebApplicationContext;
 
+
+@ConditionalOnProperty("app.customServicePackage")
+@ComponentScan("${app.customServicePackage}")
 @Configuration
-@EnableWebMvc
-@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @Slf4j
-public class ApplicationConfig implements WebMvcConfigurer {
+public class CustomServiceConfig {
 
-   public ApplicationConfig() {
-      log.debug("ApplicationConfig()");
-   }
+   @Autowired
+   private GenericWebApplicationContext context = null;
 
-   @Override
-   // used to read in various directories to add resources for the templates to use
-   public void addResourceHandlers(ResourceHandlerRegistry registry) {
-      registry.addResourceHandler("/app/css/**").addResourceLocations("classpath:/static/css/");
-      registry.addResourceHandler("/app/js/**").addResourceLocations("classpath:/static/js/");
+   public CustomServiceConfig() {
+      log.debug("CustomServiceConfig()");
    }
 
 }
