@@ -48,7 +48,7 @@ import uk.ac.ox.ctl.lti13.security.oauth2.client.lti.authentication.OidcAuthenti
 import java.util.List;
 
 @Controller
-@RequestMapping("/app/redirect")
+@RequestMapping("/app")
 @Slf4j
 public class SisRedirectController extends RedirectableLtiController {
 
@@ -65,7 +65,7 @@ public class SisRedirectController extends RedirectableLtiController {
       return variableReplacementService;
    }
 
-   @RequestMapping
+   @RequestMapping({"/launch", "/redirect"})
    public RedirectView redirect() {
       OidcAuthenticationToken token = getTokenWithoutContext();
       OidcTokenUtils oidcTokenUtils = new OidcTokenUtils(token);
