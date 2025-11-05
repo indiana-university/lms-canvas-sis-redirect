@@ -124,7 +124,6 @@ public class AppLaunchSecurityTest {
       JSONObject customMap = new JSONObject();
       customMap.put(LTIConstants.CUSTOM_CANVAS_COURSE_ID_KEY, "1234");
       customMap.put(RedirectableLtiController.CUSTOM_REDIRECT_URL_PROP, "http://www.google.com/${CANVAS_COURSE_ID}");
-      customMap.put(CUSTOM_REDIRECT_URL_ALT_PROP, "http://google.com/search?q=alt_foobar");
 
       OidcAuthenticationToken token = TestUtils.buildToken("userId", LTIConstants.INSTRUCTOR_AUTHORITY,
             extraAttributes, customMap);
