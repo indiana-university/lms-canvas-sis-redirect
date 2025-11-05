@@ -35,6 +35,8 @@ package edu.iu.uits.lms.sisredirect.services;
 
 import edu.iu.uits.lms.canvas.model.Section;
 import edu.iu.uits.lms.canvas.services.CourseService;
+import edu.iu.uits.lms.common.variablereplacement.DefaultVariableReplacementServiceImpl;
+import edu.iu.uits.lms.common.variablereplacement.RoleResolver;
 import edu.iu.uits.lms.common.variablereplacement.VariableReplacementService;
 import edu.iu.uits.lms.lti.LTIConstants;
 import edu.iu.uits.lms.lti.config.LtiClientTestConfig;
@@ -49,7 +51,9 @@ import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -76,9 +80,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(value = SisRedirectController.class, properties = {"oauth.tokenprovider.url=http://foo"})
-// @Import({ToolConfig.class, LtiClientTestConfig.class})
-@ContextConfiguration(classes = {SisRedirectController.class, SecurityConfig.class, ToolConfig.class})
-// classes = {SisGradesExportController.class, SecurityConfig.class, ToolConfig.class})
+@ContextConfiguration(classes = {SisRedirectController.class,
+        SecurityConfig.class, ToolConfig.class, AppLaunchSecurityTest.VariableReplacementServiceTestConfig.class})
 @ActiveProfiles("none")
 public class AppLaunchSecurityTest {
 
@@ -91,14 +94,25 @@ public class AppLaunchSecurityTest {
    @MockitoBean
    private CourseService courseService = null;
 
-   @MockitoBean
+   @Autowired
    private VariableReplacementService variableReplacementService;
+
+   @MockitoBean
+   private RoleResolver roleResolver;
 
    @MockitoBean
    private LmsDefaultGrantedAuthoritiesMapper lmsDefaultGrantedAuthoritiesMapper;
 
    @MockitoBean
    private ClientRegistrationRepository clientRegistrationRepository;
+
+   @TestConfiguration
+   static class VariableReplacementServiceTestConfig {
+        @Bean
+        public VariableReplacementService variableReplacementService() {
+            return new DefaultVariableReplacementServiceImpl();
+        }
+    }
 
    @Test
    public void appNoAuthnLaunch() throws Exception {
