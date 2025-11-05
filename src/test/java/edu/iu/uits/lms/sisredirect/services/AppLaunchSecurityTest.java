@@ -33,8 +33,6 @@ package edu.iu.uits.lms.sisredirect.services;
  * #L%
  */
 
-import com.nimbusds.jose.shaded.json.JSONArray;
-import com.nimbusds.jose.shaded.json.JSONObject;
 import edu.iu.uits.lms.canvas.model.Section;
 import edu.iu.uits.lms.canvas.services.CourseService;
 import edu.iu.uits.lms.common.variablereplacement.VariableReplacementService;
@@ -42,18 +40,24 @@ import edu.iu.uits.lms.lti.LTIConstants;
 import edu.iu.uits.lms.lti.config.LtiClientTestConfig;
 import edu.iu.uits.lms.lti.config.TestUtils;
 import edu.iu.uits.lms.lti.controller.RedirectableLtiController;
+import edu.iu.uits.lms.lti.service.LmsDefaultGrantedAuthoritiesMapper;
+import edu.iu.uits.lms.sisredirect.config.SecurityConfig;
 import edu.iu.uits.lms.sisredirect.config.ToolConfig;
 import edu.iu.uits.lms.sisredirect.controller.SisRedirectController;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.ac.ox.ctl.lti13.lti.Claims;
 import uk.ac.ox.ctl.lti13.security.oauth2.client.lti.authentication.OidcAuthenticationToken;
@@ -72,21 +76,29 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(value = SisRedirectController.class, properties = {"oauth.tokenprovider.url=http://foo"})
-@Import({ToolConfig.class, LtiClientTestConfig.class})
+// @Import({ToolConfig.class, LtiClientTestConfig.class})
+@ContextConfiguration(classes = {SisRedirectController.class, SecurityConfig.class, ToolConfig.class})
+// classes = {SisGradesExportController.class, SecurityConfig.class, ToolConfig.class})
 @ActiveProfiles("none")
 public class AppLaunchSecurityTest {
 
    @Autowired
    private MockMvc mvc;
 
-   @MockBean
+   @MockitoBean
    private MessageSource messageSource = null;
 
-   @MockBean
+   @MockitoBean
    private CourseService courseService = null;
 
-   @Autowired
+   @MockitoBean
    private VariableReplacementService variableReplacementService;
+
+   @MockitoBean
+   private LmsDefaultGrantedAuthoritiesMapper lmsDefaultGrantedAuthoritiesMapper;
+
+   @MockitoBean
+   private ClientRegistrationRepository clientRegistrationRepository;
 
    @Test
    public void appNoAuthnLaunch() throws Exception {
@@ -112,6 +124,7 @@ public class AppLaunchSecurityTest {
       JSONObject customMap = new JSONObject();
       customMap.put(LTIConstants.CUSTOM_CANVAS_COURSE_ID_KEY, "1234");
       customMap.put(RedirectableLtiController.CUSTOM_REDIRECT_URL_PROP, "http://www.google.com/${CANVAS_COURSE_ID}");
+      customMap.put(CUSTOM_REDIRECT_URL_ALT_PROP, "http://google.com/search?q=alt_foobar");
 
       OidcAuthenticationToken token = TestUtils.buildToken("userId", LTIConstants.INSTRUCTOR_AUTHORITY,
             extraAttributes, customMap);
@@ -186,7 +199,7 @@ public class AppLaunchSecurityTest {
 
    @Test
    public void randomUrlWithAuth() throws Exception {
-      OidcAuthenticationToken token = TestUtils.buildToken("userId", "foo", TestUtils.defaultRole());
+      OidcAuthenticationToken token = TestUtils.buildToken("userId", "foo", LTIConstants.BASE_USER_AUTHORITY);
       SecurityContextHolder.getContext().setAuthentication(token);
 
       //This is a secured endpoint and should not allow access without authn
