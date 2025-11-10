@@ -61,7 +61,7 @@
         <java.version>25</java.version>
         <jdk.source>25</jdk.source>
         <jdk.target>25</jdk.target>
-        <lms-embedded-services.version>6.3.2</lms-embedded-services.version>
+        <lms-embedded-services.version>6.3.3</lms-embedded-services.version>
         <lms-team-spring-boot-it12>6.5.2_2</lms-team-spring-boot-it12>
         <spring-cloud-dependencies.version>2025.0.0</spring-cloud-dependencies.version>
 
@@ -230,7 +230,12 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
-                    <proc>full</proc>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>
