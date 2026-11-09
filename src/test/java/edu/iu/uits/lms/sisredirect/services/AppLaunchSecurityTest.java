@@ -4,7 +4,7 @@ package edu.iu.uits.lms.sisredirect.services;
  * #%L
  * sis-redirect
  * %%
- * Copyright (C) 2015 - 2025 Indiana University
+ * Copyright (C) 2015 - 2026 Indiana University
  * %%
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -39,7 +39,6 @@ import edu.iu.uits.lms.common.variablereplacement.DefaultVariableReplacementServ
 import edu.iu.uits.lms.common.variablereplacement.RoleResolver;
 import edu.iu.uits.lms.common.variablereplacement.VariableReplacementService;
 import edu.iu.uits.lms.lti.LTIConstants;
-import edu.iu.uits.lms.lti.config.LtiClientTestConfig;
 import edu.iu.uits.lms.lti.config.TestUtils;
 import edu.iu.uits.lms.lti.controller.RedirectableLtiController;
 import edu.iu.uits.lms.lti.service.LmsDefaultGrantedAuthoritiesMapper;
@@ -50,14 +49,12 @@ import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -75,6 +72,7 @@ import java.util.Map;
 import static edu.iu.uits.lms.sisredirect.controller.SisRedirectController.CUSTOM_REDIRECT_URL_ALT_PROP;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -142,14 +140,13 @@ public class AppLaunchSecurityTest {
       OidcAuthenticationToken token = TestUtils.buildToken("userId", LTIConstants.INSTRUCTOR_AUTHORITY,
             extraAttributes, customMap);
 
-      SecurityContextHolder.getContext().setAuthentication(token);
-
       String expectedRedirectUrl = "http://www.google.com/1234";
 
       doReturn(Collections.emptyList()).when(courseService).getCourseSections(any());
 
       //This is a secured endpoint and should not allow access without authn
       mvc.perform(get("/app/redirect")
+                  .with(authentication(token))
                   .header(HttpHeaders.USER_AGENT, TestUtils.defaultUseragent())
                   .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().is3xxRedirection())
@@ -176,8 +173,6 @@ public class AppLaunchSecurityTest {
       OidcAuthenticationToken token = TestUtils.buildToken("userId", LTIConstants.INSTRUCTOR_AUTHORITY,
             extraAttributes, customMap);
 
-      SecurityContextHolder.getContext().setAuthentication(token);
-
       String expectedRedirectUrl = "http://www.apple.com";
 
       List<Section> sections = new ArrayList<>();
@@ -194,6 +189,7 @@ public class AppLaunchSecurityTest {
 
       //This is a secured endpoint and should not allow access without authn
       mvc.perform(get("/app/redirect")
+                  .with(authentication(token))
                   .header(HttpHeaders.USER_AGENT, TestUtils.defaultUseragent())
                   .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().is3xxRedirection())
@@ -202,7 +198,6 @@ public class AppLaunchSecurityTest {
 
    @Test
    public void randomUrlNoAuth() throws Exception {
-      SecurityContextHolder.getContext().setAuthentication(null);
       //This is a secured endpoint and should not allow access without authn
       mvc.perform(get("/asdf/foobar")
             .header(HttpHeaders.USER_AGENT, TestUtils.defaultUseragent())
@@ -213,10 +208,9 @@ public class AppLaunchSecurityTest {
    @Test
    public void randomUrlWithAuth() throws Exception {
       OidcAuthenticationToken token = TestUtils.buildToken("userId", "foo", LTIConstants.BASE_USER_AUTHORITY);
-      SecurityContextHolder.getContext().setAuthentication(token);
-
       //This is a secured endpoint and should not allow access without authn
       mvc.perform(get("/asdf/foobar")
+            .with(authentication(token))
             .header(HttpHeaders.USER_AGENT, TestUtils.defaultUseragent())
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound());

@@ -4,7 +4,7 @@ package edu.iu.uits.lms.sisredirect.config;
  * #%L
  * sis-redirect
  * %%
- * Copyright (C) 2015 - 2025 Indiana University
+ * Copyright (C) 2015 - 2026 Indiana University
  * %%
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -41,6 +41,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -53,6 +54,7 @@ import static edu.iu.uits.lms.lti.LTIConstants.WELL_KNOWN_ALL;
 
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
     @Autowired
